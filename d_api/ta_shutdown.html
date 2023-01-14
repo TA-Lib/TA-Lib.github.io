@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- #BeginTemplate "../master.dwt" -->
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta name="Author" content="TA-LIB.org">
+    <meta name="description" content="Technical analysis open-source software library to process financial data. Provides RSI, MACD, Stochastic, moving average...  Works with Excel, C/C++, Java, Perl, Python and .NET">
+    <meta name="keywords" content="technical analysis, Technical Analysis, developer, trading, invest, stock market, commodity market,futures market,indicators,fibonnacci,fibonacci,source code,C Library,C++ Library,freeware,open-source,finance software,trading software,excel,add-ins">
+
+    <!-- #BeginEditable "doctitle" -->
+
+<title>TA_Shutdown</title>
+
+    <!-- #EndEditable -->
+
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../css/gray.css" title="gray">
+    
+<style type="text/css">
+p { margin: 0px 0px 4px 0px;
+	text-align: left;
+}
+</style></head>
+<body>
+
+<div id="title">
+<h1>TA-Lib : Technical Analysis Library</h1>
+</div>
+
+<div id="icon"></div>
+
+<div id="content">
+<!-- #BeginEditable "Region1" -->
+
+<p><b>NAME<br>
+</b>&nbsp;<font size="2">&nbsp;&nbsp;<b> </b>TA_Shutdown - C
+Function<br>
+</font>
+<b><br>
+<br>
+SYNOPSIS<br>
+</b><font face="Courier New" size="2">&nbsp;&nbsp;&nbsp; #include &quot;ta_libc.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp; TA_RetCode TA_Shutdown( void );<br>
+</font></p>
+<p><b>DESCRIPTION</p>
+</b>
+<p style="margin-right: 150">
+  <font size="2">Free internal resources used by TA-Lib. This function will typically be
+  called before your application exit. </font>
+  </p>
+  <p style="margin-right: 150"><font size="2">TA_Shutdown shall be called only if TA_Initialize return code was TA_SUCCESS.</font></p>
+  <p style="margin-right: 150"><font size="2">Multithread user: Make sure that all thread are not using anymore TA-Lib before calling TA_Shutdown.</font></p>
+<p><b>RETURN VALUE</b></p>
+<table border="1" cellspacing="4">
+    <tr>
+      <td><font size="2">TA_SUCCESS</font></td>
+      <td><font size="2">Operation is successful</font></td>
+    </tr>
+    <tr>
+      <td><font size="2">TA_BAD_PARAM</font></td>
+      <td><font size="2">One of the parameter has an unexpected valued.</font></td>
+    </tr>
+    <tr>
+      <td><font size="2">TA_BAD_OBJECT</font></td>
+      <td><font size="2">Memory corruption or a bad pointer
+        was provided.</font></td>
+    </tr>
+    <tr>
+      <td><font size="2">TA_MEM_LEAK</font></td>
+      <td><font size="2">Some objects were NOT freed prior to the shutdown.</font></td>
+    </tr>
+    <tr>
+      <td><font size="2">TA_ALLOC_ERR</font></td>
+      <td><font size="2">Memory corruption detected</font></td>
+    </tr>
+    <tr>
+      <td><font size="2">TA_UNKNOWN_ERR</font></td>
+      <td><font size="2">Operation failed for unknown/unexpected reason</font></td>
+    </tr>
+  </table>
+      <P style="margin-right: 150"><font size="2">For other error code, or to match a number to an 
+      error description, check the TA_RetCode enumeration in 
+      &quot;ta-lib/c/include/ta_common.h&quot;</font></P>
+<p><b>SEE ALSO</b></p>
+  <p><a href="ta_initialize.html"><font size="2">TA_Initialize</font></a></p>
+<p>
+<b><br>
+EXAMPLE</b>
+</p>
+<!--webbot bot="Include" U-Include="ta_shutdown_1.html" TAG="BODY" startspan -->
+<pre>
+<font color="0000ff"><strong>#include <font color="#008000">&lt;stdio.h&gt;</font></strong></font>
+<font color="0000ff"><strong>#include <font color="#008000">&quot;ta_libc.h&quot;</font></strong></font>
+
+<strong>int</strong> <font color="#2040a0">main</font><font color="4444FF">(</font> <strong>void</strong> <font color="4444FF">)</font>
+<font color="4444FF"><strong>{</strong></font>
+   <font color="#2040a0">TA_RetCode</font> <font color="#2040a0">retCode</font><font color="4444FF">;</font>
+
+   <font color="#2040a0">retCode</font> <font color="4444FF">=</font> <font color="#2040a0">TA_Initialize</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+
+   <strong>if</strong><font color="4444FF">(</font> <font color="#2040a0">retCode</font> <font color="4444FF">!</font><font color="4444FF">=</font> <font color="#2040a0">TA_SUCCESS</font> <font color="4444FF">)</font>
+      <font color="#2040a0">printf</font><font color="4444FF">(</font> <font color="#008000">&quot;Cannot initialize TA-LIB (%d)!<font color="#008000">\n</font>&quot;</font>, <font color="#2040a0">retCode</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+   <strong>else</strong>
+   <font color="4444FF"><strong>{</strong></font>
+      <font color="#2040a0">printf</font><font color="4444FF">(</font> <font color="#008000">&quot;TA-LIB correctly initialized.<font color="#008000">\n</font>&quot;</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+
+      <font color="#444444">/* ... other TA-LIB functions can be used here. */</font>
+
+      <font color="#2040a0">retCode</font> <font color="4444FF">=</font> <font color="#2040a0">TA_Shutdown</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+      <strong>if</strong><font color="4444FF">(</font> <font color="#2040a0">retCode</font> <font color="4444FF">!</font><font color="4444FF">=</font> <font color="#2040a0">TA_SUCCESS</font> <font color="4444FF">)</font>
+         <font color="#2040a0">printf</font><font color="4444FF">(</font> <font color="#008000">&quot;Library shutdown failed (%d)<font color="#008000">\n</font>&quot;</font>, <font color="#2040a0">retCode</font> <font color="4444FF">)</font><font color="4444FF">;</font>
+   <font color="4444FF"><strong>}</strong></font>
+
+   <strong>return</strong> <font color="#FF0000">0</font><font color="4444FF">;</font>
+<font color="4444FF"><strong>}</strong></font>
+
+</pre>
+<!--webbot bot="Include" i-checksum="25101" endspan --> <!-- #EndEditable -->
+</div>
+
+<div id="nav">
+    <ul id="navlist">
+        <li><a href="https://ta-lib.org/index.html">Home</a></li>
+        <li>&nbsp</li>
+        <li><a href="../hdr_doc.html">Products</a></li>        
+        <li><a href="../hdr_dw.html">Downloads</a></li>
+        <li><a href="../excel.html">Purchase</a></li>        
+        <li><a href="../support.html">Support</a></li>       
+        <li>&nbsp</li>
+        <li><a href="../function.html">Function List</a></li>
+        <li>&nbsp</li>
+        <li><a href="../hdr_dev.html">Source Code</a>&nbsp</li>
+        <li><a href="http://tadoc.org/forum">Community Forum</a></li>		
+        <li><a href="../hdr_lnk.html">Useful Links</a></li>
+		<li>&nbsp</li>
+		<li><a href="../about.html">About Us</a></li>
+    </ul>
+    <div id="notice">
+        TA-Lib websites, products and trademarks are owned&nbsp; by TicTacTec LLC.</div>
+
+</div>
+
+<div id="contentLarge">
+<!-- #BeginEditable "Region2" --><!-- #EndEditable -->
+</div>
+
+</body>
+<!-- #EndTemplate -->
+</html>

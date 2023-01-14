@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- #BeginTemplate "../master.dwt" -->
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta name="Author" content="TA-LIB.org">
+    <meta name="description" content="Technical analysis open-source software library to process financial data. Provides RSI, MACD, Stochastic, moving average...  Works with Excel, C/C++, Java, Perl, Python and .NET">
+    <meta name="keywords" content="technical analysis, Technical Analysis, developer, trading, invest, stock market, commodity market,futures market,indicators,fibonnacci,fibonacci,source code,C Library,C++ Library,freeware,open-source,finance software,trading software,excel,add-ins">
+
+    <!-- #BeginEditable "doctitle" -->
+
+<title>TA_SetUnstablePeriod</title>
+
+    <!-- #EndEditable -->
+
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../css/gray.css" title="gray">
+    
+<style type="text/css">
+p { margin: 0px 0px 4px 0px;
+	text-align: left;
+}
+</style></head>
+<body>
+
+<div id="title">
+<h1>TA-Lib : Technical Analysis Library</h1>
+</div>
+
+<div id="icon"></div>
+
+<div id="content">
+<!-- #BeginEditable "Region1" -->
+<p>&nbsp;</p>
+      <P><B>NAME<BR></B><FONT face="Courier New" size="2">&nbsp;&nbsp;&nbsp;<B> 
+      </B>TA_SetUnstablePeriod - C Function<BR></FONT><B><BR><BR>SYNOPSIS<BR></B>
+      <font size="2" face="Courier New">&nbsp;&nbsp;&nbsp;
+      </font>
+      <font size="2" face="Courier New">#include 
+      "ta_libc.h"<BR><BR>&nbsp;&nbsp;&nbsp; TA_RetCode TA_SetUnstablePeriod( TA_FuncUnstId id,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+      <span lang="en-us">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>unsigned int unstablePeriod );<BR></font></P>
+      <P><BR><B>DESCRIPTION</B></P>
+<p style="margin-right: 150" align="justify"><font size="2"><span lang="en-us">Some functions 
+are influenced by the whole range of the past data. These functions are 
+sometimes 
+called functions with  memory. An example is the EMA (Exponential Moving 
+Average) . The EMA use the previous day EMA in its algorithm. By doing so, a given 
+point will never be &quot;drop&quot; and will have an influence on all the subsequent 
+values. In contrast a simple moving average (SMA) reflects the average of a 
+finite set of data (the average only of the requested period).</span></font></p>
+<p style="margin-right: 150" align="justify"><font size="2">The following 
+graphic shows three EMA, all being configured for 9 periods. The only difference is that they 
+start their processing at different point in time. Notice that eventually they 
+stabilize and overlap.</font></p>
+<p style="margin-right: 150" align="justify">
+<img border="0" src="example_unstable.jpg" width="560" height="469"></p>
+<p style="margin-right: 150" align="justify"><font size="2">Your application 
+may find undesirable this kind of data variation (particularly for 
+<span lang="en-us">&quot;walk-forward&quot; </span>testing 
+application). <span lang="en-us">Any trade strategy using the first few value 
+from this EMA may trig false signals that would not otherwise exist if more 
+&quot;previous&quot; data would have been processed. TA_SetUnstablePeriod allows to strip 
+off </span>such <span lang="en-us">initial </span>unstable 
+period. In other word, a TA function could be configured to return the data only 
+at the point where its output will <b>reasonably</b> be always the same,&nbsp; 
+regardless of the amount of past data. In the example here, <span lang="en-us">
+setting the unstable period around </span>the 34th price bar<span lang="en-us"> 
+would be sufficient</span>.</font></p>
+<p style="margin-right: 150" align="justify"><span lang="en-us"><font size="2">
+The general guideline is to strip off as much data as you can afford. It appears 
+that getting rid of 100 price bars is reasonable for most TA functions.</font></span></p>
+<p style="margin-right: 150" align="justify"><span lang="en-us"><font size="2">
+By default, there is no unstable period for all TA functions. It is your 
+responsibility to figure out how much data to strip off for the sake of 
+consistency.</font></span></p>
+<p style="margin-right: 150" align="justify"><span lang="en-us"><font size="2">
+When an unstable period is specified, it is a global setting. It will affects 
+also the composite functions (TA functions using other TA functions). Example: 
+setting an unstable period for an EMA will affect also the EMA used within the 
+MACD function.</font></span></p>
+<p style="margin-right: 150" align="justify"><span lang="en-us"><font size="2">
+This feature of controlling the &quot;unstable period&quot; is rarely provided by 
+commercial technical analysis software... simply because most user are not aware of the 
+issue and many products do not bother about the added complexity of providing a 
+solution.</font></span></p>
+<p style="margin-right: 150" align="justify"><span lang="en-us"><font size="2">
+At this point, you probably knows enough for handling properly the issue. Some 
+crazy people may wish to go one step further by attempting to make function with 
+memories use a finite set of data. Making this will guarantee that a given point 
+in the time series will <b>ALWAYS</b> return <b>EXACTLY</b> the same value. 
+Again, this is an &quot;advance discussion&quot;, and setting a large unstable period will 
+be sufficient for most user, but still, here is the trick: This is achieved by 
+calling the TA function with a startIdx equal to the endIdx. In other word, 
+process each point of your TA function individually. By doing this, the amount 
+of input data will be ALWAYS the same for a given point, and thus the result 
+will be always exactly the same. In other word, an EMA function will technically 
+end-up to use a fix amount of data (the fix initial value and then the fix 
+unstable period) and then everything is thrown away and independently repeated 
+for the next point in the time series.</font></span></p>
+<p><b>PARAMETERS</b></p>
+  <p style="margin-right: 150"><b><font size="2">'<span lang="en-us">id</span>'</font></b><font size="2"><br>
+  <span lang="en-us">Specify to which TA function you wish to modify the 
+  unstable period. </span>
+  </font>
+  <span lang="en-us"><font size="2">Each TA function who have an algorithm 
+  introducing &quot;memories&quot; will have an unique identifier. These identifier are 
+  enumerated at the very end of the &quot;ta-lib/c/include/ta_func.h&quot; file in the 
+  TA_Func. If you wish to change all applicable TA functions in one call, 
+  specify here &quot;TA_FUNC_UNST_ALL&quot; </font></span></p>
+  <p style="margin-right: 150"><b><font size="2">'<span lang="en-us">unstablePeriod</span>'<br>
+  </font>
+  </b><span lang="en-us"><font size="2">Specify the number of outputs that are 
+  going to be strip off for this TA function. Could be zero if you wish that TA 
+  function to return all the data (like most TA software does).</font></span></p>
+      <P><B>RETURN VALUE</B></P>
+      <TABLE cellSpacing=4 border=1>
+          <TBODY>
+          <TR>
+            <TD><font size="2">TA_SUCCESS</font></TD>
+            <TD><font size="2">Operation is successful</font></TD></TR>
+          <TR>
+            <TD><font size="2">TA_BAD_PARAM</font></TD>
+            <TD><span lang="en-us"><font size="2">Out of range parameter.</font></span></TD></TR>
+          </TBODY></TABLE>
+      <P style="margin-right: 150"><span lang="en-us"><font size="2">For other error code, or to match a number to an 
+      error description, check the TA_RetCode enumeration in 
+      &quot;ta-lib/c/include/ta_common.h&quot;</font></span></P>
+      <P><B>SEE ALSO</B></P>
+        <P><font size="2"><a href="ta_getunstableperiod.html">
+        TA_GetUnstablePeriod</a></font></P>
+      
+<!-- #EndEditable -->
+</div>
+
+<div id="nav">
+    <ul id="navlist">
+        <li><a href="https://ta-lib.org/index.html">Home</a></li>
+        <li>&nbsp</li>
+        <li><a href="../hdr_doc.html">Products</a></li>        
+        <li><a href="../hdr_dw.html">Downloads</a></li>
+        <li><a href="../excel.html">Purchase</a></li>        
+        <li><a href="../support.html">Support</a></li>       
+        <li>&nbsp</li>
+        <li><a href="../function.html">Function List</a></li>
+        <li>&nbsp</li>
+        <li><a href="../hdr_dev.html">Source Code</a>&nbsp</li>
+        <li><a href="http://tadoc.org/forum">Community Forum</a></li>		
+        <li><a href="../hdr_lnk.html">Useful Links</a></li>
+		<li>&nbsp</li>
+		<li><a href="../about.html">About Us</a></li>
+    </ul>
+    <div id="notice">
+        TA-Lib websites, products and trademarks are owned&nbsp; by TicTacTec LLC.</div>
+
+</div>
+
+<div id="contentLarge">
+<!-- #BeginEditable "Region2" --><!-- #EndEditable -->
+</div>
+
+</body>
+<!-- #EndTemplate -->
+</html>

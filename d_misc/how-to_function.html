@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- #BeginTemplate "../master.dwt" -->
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta name="Author" content="TA-LIB.org">
+    <meta name="description" content="Technical analysis open-source software library to process financial data. Provides RSI, MACD, Stochastic, moving average...  Works with Excel, C/C++, Java, Perl, Python and .NET">
+    <meta name="keywords" content="technical analysis, Technical Analysis, developer, trading, invest, stock market, commodity market,futures market,indicators,fibonnacci,fibonacci,source code,C Library,C++ Library,freeware,open-source,finance software,trading software,excel,add-ins">
+
+    <!-- #BeginEditable "doctitle" -->
+
+    <title>How-To</title>
+
+    <!-- #EndEditable -->
+
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../css/gray.css" title="gray">
+    
+<style type="text/css">
+p { margin: 0px 0px 4px 0px;
+	text-align: left;
+}
+</style></head>
+<body>
+
+<div id="title">
+<h1>TA-Lib : Technical Analysis Library</h1>
+</div>
+
+<div id="icon"></div>
+
+<div id="content">
+<!-- #BeginEditable "Region1" --><h1 align="center">How-to add a TA function</h1><h2>Introduction</h2><p style="margin-right: 100" align="justify"><font size="2">This document explain how someone can contribute a new technical function. This document is intended for developers working on enhancing TA-Lib, not for user of TA-Lib. User should instead consult the API documents.</font></p><h2 style="margin-right: 150" align="justify">What is gen_code?</h2><p style="margin-right: 100" align="justify"><font size="2">A long term goal of TA-Lib is to remain easily portable to new platforms and provides interface to a variety of language. To facilitate the maintenance, the utility gen_code has been written to generate all the glue code. Already, this allows the same C/C++ TA function to be more easily integrated in .NET, Excel and Perl. The utility also forces consistency for the parameter of all the TA functions because both the <a href="http://cvs.sourceforge.net/viewcvs.py/ta-lib/ta-lib/c/include/ta_func.h?view=markup">ta_func.h</a> and the function body (not its content) are generated.</font></p><p style="margin-right: 100" align="justify"><font size="2">Each TA function has its interface describe in a &quot;table_x.cpp&quot; file. All these tables are found in <a href="http://cvs.sourceforge.net/viewcvs.py/ta-lib/ta-lib/c/src/ta_func/">ta-lib\c\src\ta_abstract\tables</a>. The utility gen_code uses these tables as input to figure out the function name, its parameters, the parameter range etc...</font></p><p style="margin-right: 100" align="justify"><font size="2">Type &quot;gen_code ?&quot; to see the list of generated files.</font></p><p style="margin-right: 100" align="justify"><font size="2">Most of the files are entirely re-generated, but some are a mix of generated and existing code. The TA function files found in the directory <a href="http://cvs.sourceforge.net/viewcvs.py/ta-lib/ta-lib/c/src/ta_func/">ta-lib\c\src\ta_func</a> are mixed. You can easily recognize which portion is generated; they all start with the comment /* Generated */...</font></p><p style="margin-right: 100" align="justify"><font size="2">If there is no change to the table_x.cpp files, calling gen_code over and over again will have no effect.</font></p><h2 style="margin-right: 150" align="justify">Steps to create a new TA function</h2><p style="margin-right: 100" align="justify"><font size="2">(1) Open the table_&lt;x&gt;.c file, where &lt;x&gt; is the first letter of the TA function. As an example the function &quot;TA_RSI&quot; will be find in the file <a href="http://cvs.sourceforge.net/viewcvs.py/ta-lib/ta-lib/c/src/ta_abstract/tables/table_r.c?view=markup">table_r.c</a></font></p><p style="margin-right: 100" align="justify"><font size="2">(2) Follow the instruction in the table_&lt;x&gt;.c to add a new function. It is strongly suggest to cut&amp;paste from an existing function and rename as needed. You can always change the table later if you want to add/remove some parameters.</font></p><p style="margin-right: 100" align="justify"><font size="2">(3) Compile gen_code.</font></p><p style="margin-right: 100" align="justify"><font size="2">(4) Run gen_code from ta-lib\c\bin</font></p><p style="margin-right: 100" align="justify"><font size="2">(5) The body of the function will be created in <a href="http://cvs.sourceforge.net/viewcvs.py/ta-lib/ta-lib/c/src/ta_func/">ta-lib\c\src\ta_func</a>. Add the code for the TA function outside of the generated area. Comments in the file helps to identify these area. These areas are preserve when gen_code is run again.</font></p><p style="margin-right: 100" align="justify"><font size="2">Writing a new TA function requires a good understanding of startidx, endidx, outBegIdx and outNbElement. If you are not sure about this, I strongly suggest to study a simple TA function and read again the C/C++ API.</font></p><h2 style="margin-right: 150" align="justify">Language Abstraction</h2><p style="margin-right: 100" align="justify"><font size="2">You might have notice that the same code is also compiled on .NET and Java. How is that possible? C is the mother of (most) modern language. By carefully using a subset of the C language we end up with only a few syntax difference between C, C++, managed C++ (.NET) and Java.<br><br>All these syntax differences are handled by pre-processing as follow:</font></p><p style="margin-right: 100" align="justify">#if defined( _MANAGED )<br>&nbsp; &nbsp; &nbsp;... here is the code for VS2005 and later...<br>#elif defined( _JAVA )<br>&nbsp; &nbsp; &nbsp;... here is the code for Java...<br>#else<br>&nbsp; &nbsp; &nbsp;... here is the ANSI C code...<br>#endif<br><br><font size="2">Some macro are also defined in <a href="http://svn.sourceforge.net/viewvc/ta-lib/trunk/ta-lib/c/src/ta_common/ta_memory.h?view=markup">ta_memory.h</a> to abstract some fundamental differences related to array, pointer, memory allocation etc...<br><br>If you do not want to bother about all this language abstraction stuff, just write your function in C (or C++ minus the OO) and an active maintainer of TA-Lib might do the additional steps to get the code to work with all platforms/languages.</font></p><h2 style="margin-right: 150" align="justify">Is there an easier way?!?</h2><p style="margin-right: 100" align="justify"><font size="2">Yes. Cut&amp;paste an existing function. Add/remove parameters as needed, replace with your own code, do your best for testing and submit your code to the <a href="http://www.tadoc.org/forum">forum</a> or e-mail to <a href="mailto:mfortier@ta-lib.org">mfortier@ta-lib.org</a>. Someone might complete the integration for you.</font></p><!-- #EndEditable -->
+</div>
+
+<div id="nav">
+    <ul id="navlist">
+        <li><a href="https://ta-lib.org/index.html">Home</a></li>
+        <li>&nbsp</li>
+        <li><a href="../hdr_doc.html">Products</a></li>        
+        <li><a href="../hdr_dw.html">Downloads</a></li>
+        <li><a href="../excel.html">Purchase</a></li>        
+        <li><a href="../support.html">Support</a></li>       
+        <li>&nbsp</li>
+        <li><a href="../function.html">Function List</a></li>
+        <li>&nbsp</li>
+        <li><a href="../hdr_dev.html">Source Code</a>&nbsp</li>
+        <li><a href="http://tadoc.org/forum">Community Forum</a></li>		
+        <li><a href="../hdr_lnk.html">Useful Links</a></li>
+		<li>&nbsp</li>
+		<li><a href="../about.html">About Us</a></li>
+    </ul>
+    <div id="notice">
+        TA-Lib websites, products and trademarks are owned&nbsp; by TicTacTec LLC.</div>
+
+</div>
+
+<div id="contentLarge">
+<!-- #BeginEditable "Region2" --><!-- #EndEditable -->
+</div>
+
+</body>
+<!-- #EndTemplate -->
+</html>
